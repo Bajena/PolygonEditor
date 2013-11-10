@@ -188,6 +188,10 @@ namespace GK_Lab1.Shapes
                     g.DrawLine(lineBrush, this.LineWidth, Vertices[i - 1], Vertices[i]);
                 }
 
+                if (this.Created)
+                {
+                    g.FillPolygon(this.Vertices,this.Color);
+                }
                 //Handlery
                 if (!this.Created || this.Selected)
                 {
@@ -198,6 +202,7 @@ namespace GK_Lab1.Shapes
                     handlerBrush.Dispose();
                 }
 
+                
 
             }
         }

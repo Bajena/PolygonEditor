@@ -61,6 +61,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PolygonFillHelper.cs" />
     <Compile Include="RectangleExtensions.cs" />
     <Compile Include="Shapes\Polygon.cs" />
     <Compile Include="Tools\SelectionTool.cs" />

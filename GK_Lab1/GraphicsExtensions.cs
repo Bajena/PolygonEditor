@@ -172,31 +172,194 @@ namespace GK_Lab1
             int x1 = start.X, x2 = end.X;
             int y1 = start.Y, y2 = end.Y;
             int steps;
-            
+
             int dy = y2 - y1;
             int dx = x2 - x1;
 
             float x = x1, y = y1;
-            if (Math.Abs(dx)>Math.Abs(dy))
+            if (Math.Abs(dx) > Math.Abs(dy))
                 steps = Math.Abs(dx);
             else
                 steps = Math.Abs(dy);
 
-            float xinc = dx/(float) steps;
-            float yinc = dy/(float) steps;
-            int thicknesshalf = thickness/2;
+            float xinc = dx / (float)steps;
+            float yinc = dy / (float)steps;
+            int thicknesshalf = thickness / 2;
             using (Pen p = new Pen(brush.Color))
             {
                 for (int k = 0; k < steps; k++)
                 {
                     x += xinc;
                     y += yinc;
-                    g.DrawRectangle(p,x-thicknesshalf,y-thicknesshalf,thickness,thickness);
+                    g.DrawRectangle(p, x - thicknesshalf, y - thicknesshalf, thickness, thickness);
                 }
             }
 
 
         }
+
+        public static void FillPolygon(this Graphics g, List<Point> vertices, Color color)
+        {
+            var polygonFillHelper = new PolygonFillHelper(vertices);
+            var segments =  polygonFillHelper.FillPolygon(g, color);
+
+            using (Pen pen = new Pen(color))
+            {
+                foreach (var segment in segments)
+                {
+                    g.DrawLine(pen, segment.p1,segment.p2);
+                }
+            }
+        }
+
+        
+
+
+        //public static void FillPolygon(this Graphics g, List<Point> vertices, Color color)
+        //{
+        //    var ET = Edge.CreateEdges(vertices);
+        //    var AET = new List<Edge>();
+        //    ET.Sort(Edge.CompareEdges);
+        //    //ET.AddRange(ET.OrderBy(e => e.ymin));
+        //    List<int> list = new List<int>();
+        //    int scanline = ET[0].ymin;
+        //    int scanlineEnd = ET[ET.Count - 1].ymax;
+        //    using (var pen = new Pen(Color.Red))
+        //    {
+        //        for (; scanline <= scanlineEnd; scanline++)
+        //        {
+        //            list.Clear();
+        //            foreach (Edge edge in ET)
+        //            {
+        //                // here the scanline intersects the smaller vertice
+        //                if (scanline == edge.ymin)
+        //                {
+        //                    if (scanline == edge.ymax)
+        //                    {
+        //                        // the current edge is horizontal, so we add both vertices
+        //                        edge.Deactivate();
+        //                        list.Add((int)edge.xval);
+        //                    }
+        //                    else
+        //                    {
+        //                        edge.Activate();
+        //                        // we don't insert it in the list cause this vertice is also
+        //                        // the (bigger) vertice of another edge and already handled
+        //                    }
+        //                }
+
+        //                // here the scanline intersects the bigger vertice
+        //                if (scanline == edge.ymax)
+        //                {
+        //                    edge.Deactivate();
+        //                    list.Add((int)edge.xval);
+        //                }
+
+        //                // here the scanline intersects the edge, so calc intersection point
+        //                if (scanline > edge.ymin && scanline < edge.ymax)
+        //                {
+        //                    edge.Update();
+        //                    list.Add((int)edge.xval);
+        //                }
+        //            }
+        //            list.Sort();
+        //            for (int i = 0; i < list.Count; i += 2)
+        //            {
+        //                g.DrawLine(pen, list[i], scanline, list[i + 1], scanline);
+        //                //list.get(i), scanline,list.get(i + 1), scanline);
+        //            }
+
+        //        }
+        //    }
+        //}
+
+        //public class Edge
+        //{
+        //    public Point p1, p2;
+
+        //    public int ymin;
+        //    public int ymax;
+        //    public float xval;
+        //    public float invm;
+        //    private float m;
+
+        //    public Edge(Point a, Point b)
+        //    {
+        //        this.p1 = a;
+        //        this.p2 = b;
+        //        if (p1.Y > p2.Y)
+        //        {
+        //            Point tmp = p1;
+        //            p1 = p2;
+        //            p2 = tmp;
+        //        }
+        //        ymin = p1.Y;
+        //        ymax = p2.Y;
+        //        //xval = p1.X;
+        //        //m = (float)((float)(p2.Y - p1.Y) / (float)(p2.X - p1.X));
+        //        invm = ((float)(p1.X - p2.X) / (float)(p1.Y - p2.Y));
+        //    }
+
+
+        //    /*
+        //     * Called when scanline intersects the first vertice of this edge.
+        //     * That simply means that the intersection point is this vertice.
+        //     */
+        //    public void Activate()
+        //    {
+        //        xval = p1.X;
+        //    }
+
+        //    /*
+        //     * Update the intersection point from the scanline and this edge.
+        //     * Instead of explicitly calculate it we just increment with 1/m every time
+        //     * it is intersected by the scanline.
+        //     */
+        //    public void Update()
+        //    {
+        //        //xval += (float)((float)1 / (float)m);
+        //        xval += invm;
+        //    }
+
+        //    /*
+        //     * Called when scanline intersects the second vertice, 
+        //     * so the intersection point is exactly this vertice and from now on 
+        //     * we are done with this edge
+        //     */
+        //    public void Deactivate()
+        //    {
+        //        xval = p2.X;
+        //    }
+
+        //    public static List<Edge> CreateEdges(List<Point> vertices)
+        //    {
+        //        var edges = new List<Edge>();
+        //        for (int i = 0; i < vertices.Count; i++)
+        //        {
+        //            Point p1 = vertices[i];
+        //            Point p2 = vertices[(i + 1) % vertices.Count];
+        //            if (p1.Y != p2.Y)
+        //                edges.Add(new Edge(p1, p2));
+
+        //        }
+        //        return edges;
+        //    }
+        //    public static int CompareEdges(Edge e1, Edge e2)
+        //    {
+        //        if (e1.ymin < e2.ymin)
+        //            return -1;
+        //        else if (e2.ymin < e1.ymin)
+        //            return 1;
+        //        else
+        //        {
+        //            if (e1.xval < e2.xval)
+        //                return -1;
+        //            else if (e2.xval < e2.xval)
+        //                return 1;
+        //        }
+        //        return 0;
+        //    }
+        //}
 
     }
 }
